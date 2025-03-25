@@ -4,6 +4,7 @@ const Skills = () => {
   const skills = [
     "HTML",
     "CSS",
+    "Tailwind Css",
     "JavaScript",
     "React",
     "Adobe Photoshop",
@@ -11,7 +12,7 @@ const Skills = () => {
   ];
 
   return (
-    <section id="skills" className="py-20">
+    <section id="skills" className="py-48">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-8">Skills</h2>
         <div className="flex flex-wrap justify-center gap-4">

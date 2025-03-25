@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FaWhatsapp } from "react-icons/fa"; // Import WhatsApp icon
+import { FaWhatsapp, FaGithub, FaLinkedin } from "react-icons/fa";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -64,15 +64,41 @@ const Header = () => {
         </div>
       </header>
 
-      {/* WhatsApp Floating Button */}
-      <a
-        href="https://wa.me/919060917383?text=Hello%20Shubham!%20I%20want%20to%20talk%20about%20a%20project."
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition flex items-center"
-      >
-        <FaWhatsapp className="text-3xl" />
-      </a>
+      {/* Social Media Floating Buttons */}
+      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+        {/* WhatsApp Button */}
+        <a
+          href="https://wa.me/919060917383?text=Hello%20Shubham!%20I%20want%20to%20talk%20about%20a%20project."
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition flex items-center justify-center"
+          aria-label="Chat on WhatsApp"
+        >
+          <FaWhatsapp className="text-3xl" />
+        </a>
+
+        {/* GitHub Button */}
+        <a
+          href="https://github.com/jhashubham17"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-gray-800 text-white p-4 rounded-full shadow-lg hover:bg-gray-700 transition flex items-center justify-center"
+          aria-label="View GitHub Profile"
+        >
+          <FaGithub className="text-3xl" />
+        </a>
+
+        {/* LinkedIn Button */}
+        <a
+          href="https://www.linkedin.com/in/your-linkedin-profile" // Replace with your actual LinkedIn URL
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition flex items-center justify-center"
+          aria-label="View LinkedIn Profile"
+        >
+          <FaLinkedin className="text-3xl" />
+        </a>
+      </div>
     </>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 const Projects = () => {
   const [expanded, setExpanded] = useState({});
@@ -15,7 +16,7 @@ const Projects = () => {
       image: "./project01.png",
       title: "PS Sansara",
       description:
-        "Designing and developing the landing page for PS Sansara, a construction company, to showcase its expertise and services effectively. The website features a modern design with sections for services, projects, and client testimonials. Built with React and Tailwind CSS for optimal performance and responsiveness across all devices.",
+        "Designed and developed a modern landing page for PS Sansara, a construction company, showcasing its expertise and services. Features a clean design with service highlights, project galleries, and client testimonials. Built with React and Tailwind CSS for performance and responsiveness.",
       link: "https://pssansara.com/",
       certificate:
         "https://drive.google.com/file/d/1hyvqiKqmkzePAFsRnWe6sJTY_6O4iaaU/view?usp=drivesdk",
@@ -24,36 +25,89 @@ const Projects = () => {
       image: "./project02.jpg",
       title: "Harine General Store",
       description:
-        "Harine General Store is a local retail store offering essential household items such as soap, rice, and mustard oil. Serving the community with quality products at affordable prices, the store aims to provide convenience and reliability to its customers. The React-based e-commerce platform includes product listings, a shopping cart, and basic checkout functionality. Future updates will include user authentication and payment gateway integration.",
+        "An e-commerce platform for Harine General Store, offering household essentials like soap and rice. Built with React, it includes product listings and a shopping cart, with plans for authentication and payment integration. Focuses on convenience and affordability.",
       link: "https://harinestore.netlify.app/",
     },
     {
       image: "./project03.png",
       title: "Kitaabkhana",
       description:
-        "Kitaabkhana is a book reader website where users can explore, rate, and review books. It allows users to add book names, provide details, and give ratings, making it a community-driven platform for book enthusiasts. The application features Firebase authentication, real-time database updates, and a responsive design. Additional features include book search functionality and user profile management.",
+        "A community-driven book reader platform where users can explore, rate, and review books. Built with React and Firebase, it offers authentication, real-time updates, and a responsive design. Includes book search and user profile features.",
       link: "https://kitaabkhana.netlify.app/",
     },
   ];
 
+  // Animation variants
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.2, duration: 0.6, ease: "easeOut" },
+    }),
+  };
+
+  const buttonVariants = {
+    hover: {
+      scale: 1.05,
+      boxShadow: "0px 0px 12px rgba(0, 0, 0, 0.2)",
+      transition: { duration: 0.3 },
+    },
+    tap: { scale: 0.95 },
+  };
+
   return (
-    <section id="projects" className="py-20 bg-gray-100">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-bold text-center mb-8">Projects</h2>
+    <section
+      id="projects"
+      className="relative py-32 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden"
+    >
+      {/* Background Decorations */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-0 w-full h-full bg-grid-pattern opacity-10"></div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-blue-200/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
+
+      <div className="container mx-auto px-6 md:px-12 relative z-10">
+        <motion.h2
+          className="text-4xl md:text-5xl font-extrabold text-center text-gray-900 mb-16 relative inline-block"
+          initial={{ opacity: 0, y: -50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+        >
+          My Projects
+          <span className="absolute -bottom-2 left-0 w-full h-1 bg-blue-400/50 rounded-full animate-pulse"></span>
+        </motion.h2>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project, index) => (
-            <div
+            <motion.div
               key={index}
-              className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col"
+              className="bg-white/90 backdrop-blur-sm p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col group"
+              custom={index}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              whileHover={{ y: -10 }}
             >
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-48 md:h-56 object-cover rounded-t-lg"
-              />
-              <h3 className="text-xl font-bold mt-4">{project.title}</h3>
+              {/* Image with Overlay */}
+              <div className="relative overflow-hidden rounded-t-lg">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-48 md:h-56 object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+
+              {/* Content */}
+              <h3 className="text-xl font-bold mt-4 text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                {project.title}
+              </h3>
               <div className="flex-grow">
-                <p className="mt-2 text-gray-600">
+                <p className="mt-2 text-gray-600 leading-relaxed">
                   {expanded[index]
                     ? project.description
                     : `${project.description.substring(0, 100)}...`}
@@ -61,46 +115,81 @@ const Projects = () => {
                 {project.description.length > 100 && (
                   <button
                     onClick={() => toggleExpand(index)}
-                    className="text-blue-500 hover:text-blue-700 text-sm mt-2 focus:outline-none"
+                    className="text-blue-500 hover:text-blue-700 text-sm mt-2 font-medium transition-colors duration-300 focus:outline-none"
                   >
                     {expanded[index] ? "Show Less" : "Read More"}
                   </button>
                 )}
               </div>
-              <div className="flex flex-wrap gap-2 mt-4">
-                <a
+
+              {/* Buttons */}
+              <div className="flex flex-wrap gap-3 mt-6">
+                <motion.a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-blue-500 text-white font-bold rounded-lg hover:bg-blue-600 transition-colors duration-300"
+                  className="px-4 py-2 bg-gradient-to-r from-blue-500 to-cyan-400 text-white font-semibold rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+                  variants={buttonVariants}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
                   View Project
-                </a>
+                </motion.a>
                 {project.certificate && (
-                  <a
+                  <motion.a
                     href={project.certificate}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition-colors duration-300"
+                    className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-400 text-white font-semibold rounded-full shadow-md hover:shadow-lg transition-all duration-300"
+                    variants={buttonVariants}
+                    whileHover="hover"
+                    whileTap="tap"
                   >
                     Certificate
-                  </a>
+                  </motion.a>
                 )}
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
-        <div className="text-center mt-12">
-          <a
+
+        {/* GitHub Link */}
+        <motion.div
+          className="text-center mt-16"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          viewport={{ once: true }}
+        >
+          <motion.a
             href="https://github.com/jhashubham17"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-6 py-3 bg-gray-800 text-white font-bold rounded-lg hover:bg-gray-700 transition-colors duration-300"
+            className="inline-block px-8 py-3 bg-gradient-to-r from-gray-800 to-gray-700 text-white font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
+            variants={buttonVariants}
+            whileHover="hover"
+            whileTap="tap"
           >
-            View More Projects on GitHub
-          </a>
-        </div>
+            Explore More on GitHub
+          </motion.a>
+        </motion.div>
       </div>
+
+      {/* Custom Styles */}
+      <style jsx global>{`
+        .bg-grid-pattern {
+          background-image: radial-gradient(
+            circle,
+            rgba(0, 0, 0, 0.1) 1px,
+            transparent 1px
+          );
+          background-size: 30px 30px;
+        }
+
+        .delay-1000 {
+          animation-delay: 1s;
+        }
+      `}</style>
     </section>
   );
 };

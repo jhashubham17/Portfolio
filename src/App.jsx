@@ -6,109 +6,136 @@ import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
-import welcomeSound from "./assets/welcome.mp3"; // Make sure this file exists
+import welcomeSound from "./assets/welcome.mp3";
 
 function App() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
+  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef(null);
 
-  useEffect(() => {
-    // Progress bar animation
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 30); // Adjust speed here (30ms per 1%)
+  // Handle user interaction and attempt audio playback
+  const handleUserInteraction = () => {
+    if (!userInteracted) {
+      setUserInteracted(true);
+      playAudio();
+    }
+  };
 
-    // Main loading timer
+  // Separate function to handle audio playback
+  const playAudio = () => {
+    if (audioRef.current && !loading) {
+      audioRef.current.volume = 0.5; // Reduced volume for better UX
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            console.log("Audio playing successfully");
+          })
+          .catch((error) => {
+            console.warn("Audio playback failed:", error);
+            // Retry after a short delay if failed
+            setTimeout(playAudio, 1000);
+          });
+      }
+    }
+  };
+
+  useEffect(() => {
+    // Setup audio
+    audioRef.current = new Audio(welcomeSound);
+    audioRef.current.preload = "auto";
+
+    // Event listeners for interaction
+    const events = ["click", "touchstart", "mousemove"];
+    events.forEach((event) => {
+      document.addEventListener(event, handleUserInteraction);
+    });
+
+    // Progress animation with easing
+    let animationFrame;
+    const startTime = Date.now();
+    const animateProgress = () => {
+      const elapsed = Date.now() - startTime;
+      const easedProgress = Math.min(
+        100,
+        (elapsed / 20) * (2 - elapsed / 2000)
+      );
+      setProgress(easedProgress);
+
+      if (easedProgress < 100) {
+        animationFrame = requestAnimationFrame(animateProgress);
+      }
+    };
+    animationFrame = requestAnimationFrame(animateProgress);
+
+    // Loading sequence
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => {
         setLoading(false);
-        // Play sound when content loads
-        if (audioRef.current) {
-          audioRef.current.volume = 0.8;
-          audioRef.current
-            .play()
-            .catch((e) => console.log("Audio play failed:", e));
+        if (userInteracted) {
+          playAudio();
         }
-      }, 500); // Matches fade-out duration
-    }, 3000); // Total splash screen duration
+      }, 600);
+    }, 2000);
 
+    // Cleanup
     return () => {
+      cancelAnimationFrame(animationFrame);
       clearTimeout(timer);
-      clearInterval(progressInterval);
+      events.forEach((event) => {
+        document.removeEventListener(event, handleUserInteraction);
+      });
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
-  }, []);
+  }, [userInteracted]);
 
   if (loading) {
     return (
-      <>
-        {/* Hidden audio element */}
-        <audio ref={audioRef} preload="auto">
-          <source src={welcomeSound} type="audio/mpeg" />
-          Your browser does not support the audio element.
-        </audio>
+      <div
+        className={`fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 z-50 transition-all duration-600 ${
+          fadeOut ? "opacity-0 scale-105" : "opacity-100 scale-100"
+        }`}
+        onClick={handleUserInteraction}
+      >
+        <div className="relative text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-white relative overflow-hidden">
+            <span
+              className="inline-block animate-slideIn"
+              style={{ animationDelay: "0.2s" }}
+            >
+              Shubham
+            </span>
+            <span className="text-blue-400 inline-block ml-1 animate-pulse">
+              .
+            </span>
+          </h1>
 
-        {/* Splash Screen */}
-        <div
-          className={`fixed inset-0 flex flex-col items-center justify-center bg-gray-900 z-50 transition-opacity duration-500 ${
-            fadeOut ? "opacity-0" : "opacity-100"
-          }`}
-        >
-          {/* Animated Logo Container */}
-          <div className="relative">
-            {/* Logo Text with Animation */}
-            <div className="text-center">
-              <h1 className="text-5xl md:text-6xl font-bold text-white relative overflow-hidden">
-                <span className="inline-block">
-                  <span
-                    className="block"
-                    style={{
-                      animation: "slideIn 0.8s ease-out forwards",
-                      transform: "translateY(100%)",
-                      opacity: 0,
-                    }}
-                  >
-                    Shubham
-                  </span>
-                </span>
-                <span
-                  className="text-blue-400 inline-block ml-1"
-                  style={{
-                    animation: "pulse 2s infinite",
-                  }}
-                >
-                  .
-                </span>
-              </h1>
+          <div className="w-64 h-2 bg-gray-700 rounded-full mt-8 overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 transition-all duration-300 ease-out relative"
+              style={{ width: `${progress}%` }}
+            >
+              <div className="absolute inset-0 bg-white opacity-20 animate-pulse" />
             </div>
+          </div>
 
-            {/* Progress Bar */}
-            <div className="w-64 h-1.5 bg-gray-700 rounded-full mt-8 overflow-hidden">
+          <div className="mt-6 flex justify-center gap-2">
+            {[...Array(3)].map((_, i) => (
               <div
-                className="h-full bg-blue-500 transition-all duration-300 ease-out"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-
-            {/* Loading Spinner */}
-            <div className="mt-6 flex justify-center">
-              <div
-                className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"
-                style={{ animation: "spin 1s linear infinite" }}
-              ></div>
-            </div>
+                key={i}
+                className="w-3 h-3 bg-blue-400 rounded-full animate-bounce"
+                style={{ animationDelay: `${i * 0.2}s` }}
+              />
+            ))}
           </div>
         </div>
 
-        {/* Global Styles for Animations */}
         <style jsx global>{`
           @keyframes slideIn {
             from {
@@ -120,38 +147,35 @@ function App() {
               opacity: 1;
             }
           }
-          @keyframes pulse {
-            0% {
-              transform: scale(1);
-            }
-            50% {
-              transform: scale(1.2);
-            }
-            100% {
-              transform: scale(1);
-            }
-          }
-          @keyframes spin {
+          @keyframes fadeIn {
             from {
-              transform: rotate(0deg);
+              opacity: 0;
             }
             to {
-              transform: rotate(360deg);
+              opacity: 1;
             }
           }
+          .animate-slideIn {
+            animation: slideIn 0.8s ease-out forwards;
+          }
+          .animate-fadeIn {
+            animation: fadeIn 1s ease-out forwards;
+          }
         `}</style>
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="App">
+    <div className="App min-h-screen bg-gray-50 animate-fadeIn">
       <Header />
-      <Hero />
-      <About />
-      <Skills />
-      <Projects />
-      <Contact />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Projects />
+        <Contact />
+      </main>
       <Footer />
     </div>
   );

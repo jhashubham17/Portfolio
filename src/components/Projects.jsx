@@ -17,7 +17,8 @@ const Projects = () => {
       description:
         "Designing and developing the landing page for PS Sansara, a construction company, to showcase its expertise and services effectively. The website features a modern design with sections for services, projects, and client testimonials. Built with React and Tailwind CSS for optimal performance and responsiveness across all devices.",
       link: "https://pssansara.com/",
-      certificate: "https://example.com/certificate-ps-sansara", // Add your actual certificate link here
+      certificate:
+        "https://drive.google.com/file/d/1hyvqiKqmkzePAFsRnWe6sJTY_6O4iaaU/view?usp=drivesdk",
     },
     {
       image: "./project02.jpg",

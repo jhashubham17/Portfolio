@@ -1,7 +1,7 @@
 
 dist
 node_modules
-assets
+# assets
 eslint.config.js
 index.html
 package.json

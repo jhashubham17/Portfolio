@@ -14,7 +14,8 @@ const Hero = () => {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center md:justify-start">
             <a
-              href="#certificates" // Assuming you'll add a certificates section
+              href="https://drive.google.com/file/d/1fBTZIkEFlP4K_lhlYjZLuX11wgb6PFoh/view?usp=sharing"
+              target="_blank"
               className="inline-block bg-transparent border-2 border-blue-400 hover:bg-blue-400/10 text-blue-400 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg transition-all duration-300 transform hover:scale-105"
             >
               View Certificates

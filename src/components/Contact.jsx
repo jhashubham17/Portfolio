@@ -18,26 +18,82 @@ const Contact = () => {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
+
+    // Name validation
+    if (!formData.name.trim()) {
+      newErrors.name = "Name is required";
+    } else if (formData.name.length < 2) {
+      newErrors.name = "Name must be at least 2 characters";
+    } else if (/[0-9!@#$%^&*(),.?":{}|<>]/g.test(formData.name)) {
+      newErrors.name = "Name should not contain numbers or special characters";
+    }
+
+    // Email validation
     if (!formData.email.trim()) {
       newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    } else if (
+      formData.email.includes("test") ||
+      formData.email.includes("example") ||
+      formData.email.includes("dummy")
+    ) {
+      newErrors.email = "Please use a valid email address";
     }
-    if (!formData.message.trim()) newErrors.message = "Message is required";
+
+    // Message validation
+    if (!formData.message.trim()) {
+      newErrors.message = "Message is required";
+    } else if (formData.message.length < 10) {
+      newErrors.message = "Message must be at least 10 characters long";
+    } else if (formData.message.split(" ").length > 200) {
+      newErrors.message = "Message is too long (max 200 words)";
+    }
+
+    // Spam prevention
+    const spamKeywords = [
+      "viagra",
+      "casino",
+      "lottery",
+      "click here",
+      "free offer",
+    ];
+    if (
+      spamKeywords.some((keyword) =>
+        formData.message.toLowerCase().includes(keyword)
+      )
+    ) {
+      newErrors.message = "Message contains inappropriate content";
+    }
+
     return newErrors;
+  };
+
+  const isValidSubmission = (data) => {
+    // Additional domain and submission checks
+    const bannedDomains = ["spam.com", "garbage.com"];
+    const emailDomain = data.email.split("@")[1];
+
+    return !bannedDomains.includes(emailDomain);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validateForm();
+
     if (Object.keys(validationErrors).length === 0) {
+      // Additional check before sending email
+      if (!isValidSubmission(formData)) {
+        setErrors({ general: "Unable to send message. Please try again." });
+        return;
+      }
+
       emailjs
         .send(
-          "service_ojadbmn", // Replace with your EmailJS service ID
-          "template_rtbr6d9", // Replace with your EmailJS template ID
+          "service_ojadbmn",
+          "template_rtbr6d9",
           formData,
-          "D4splXBOZTxWrljfZ" // Replace with your EmailJS user ID
+          "D4splXBOZTxWrljfZ"
         )
         .then(
           (response) => {
@@ -45,10 +101,13 @@ const Contact = () => {
             setSubmitted(true);
             setFormData({ name: "", email: "", message: "" });
             setErrors({});
-            setTimeout(() => setSubmitted(false), 5000); // Hide success message after 5s
+            setTimeout(() => setSubmitted(false), 5000);
           },
           (error) => {
             console.error("Failed to send email:", error);
+            setErrors({
+              general: "Failed to send message. Please try again later.",
+            });
           }
         );
     } else {
@@ -98,6 +157,18 @@ const Contact = () => {
           Get in Touch
           <span className="absolute -bottom-2 left-0 w-full h-1 bg-blue-400/50 rounded-full animate-pulse"></span>
         </motion.h2>
+
+        {/* General Error Message */}
+        {errors.general && (
+          <motion.div
+            className="bg-red-500/90 backdrop-blur-sm text-white px-6 py-4 rounded-lg mb-8 text-center max-w-2xl mx-auto shadow-lg"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {errors.general}
+          </motion.div>
+        )}
 
         {/* Success Message */}
         {submitted && (

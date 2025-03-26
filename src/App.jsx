@@ -12,20 +12,11 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [fadeOut, setFadeOut] = useState(false);
-  const [userInteracted, setUserInteracted] = useState(false);
   const audioRef = useRef(null);
-
-  // Handle user interaction and attempt audio playback
-  const handleUserInteraction = () => {
-    if (!userInteracted) {
-      setUserInteracted(true);
-      playAudio();
-    }
-  };
 
   // Separate function to handle audio playback
   const playAudio = () => {
-    if (audioRef.current && !loading) {
+    if (audioRef.current) {
       audioRef.current.volume = 0.5; // Reduced volume for better UX
       const playPromise = audioRef.current.play();
       if (playPromise !== undefined) {
@@ -46,12 +37,6 @@ function App() {
     // Setup audio
     audioRef.current = new Audio(welcomeSound);
     audioRef.current.preload = "auto";
-
-    // Event listeners for interaction
-    const events = ["click", "touchstart", "mousemove"];
-    events.forEach((event) => {
-      document.addEventListener(event, handleUserInteraction);
-    });
 
     // Progress animation with easing
     let animationFrame;
@@ -75,9 +60,7 @@ function App() {
       setFadeOut(true);
       setTimeout(() => {
         setLoading(false);
-        if (userInteracted) {
-          playAudio();
-        }
+        playAudio(); // Play audio automatically when loading completes
       }, 600);
     }, 2000);
 
@@ -85,15 +68,12 @@ function App() {
     return () => {
       cancelAnimationFrame(animationFrame);
       clearTimeout(timer);
-      events.forEach((event) => {
-        document.removeEventListener(event, handleUserInteraction);
-      });
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
       }
     };
-  }, [userInteracted]);
+  }, []);
 
   if (loading) {
     return (
@@ -101,7 +81,6 @@ function App() {
         className={`fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 z-50 transition-all duration-600 ${
           fadeOut ? "opacity-0 scale-105" : "opacity-100 scale-100"
         }`}
-        onClick={handleUserInteraction}
       >
         <div className="relative text-center">
           <h1 className="text-5xl md:text-6xl font-bold text-white relative overflow-hidden">

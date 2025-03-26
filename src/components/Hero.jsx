@@ -80,7 +80,7 @@ const Hero = () => {
               View Certificates
             </motion.a>
             <motion.a
-              href="https://drive.google.com/file/d/1keIurNJ3XJnBDqIqKCphexXdKBYgPVg7/view?usp=drive_link"
+              href="https://drive.google.com/file/d/1XGAdKHwrMemdun2MIsJQ6TSUY1WuC_Zo/view?usp=sharing"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block bg-transparent border-2 border-blue-400 text-blue-400 px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-400/10 transition-all duration-300"

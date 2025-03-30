@@ -35,6 +35,13 @@ const Projects = () => {
         "A community-driven book reader platform where users can explore, rate, and review books. Built with React and Firebase, it offers authentication, real-time updates, and a responsive design. Includes book search and user profile features.",
       link: "https://kitaabkhana.netlify.app/",
     },
+    {
+      image: "./project04.png",
+      title: "DreamList",
+      description:
+        "Your wishlist website will be a place where you can store and manage your wishlist items and other personal data. Since you're using React for the frontend and storing data locally, it will likely be a single-user application without a backend.",
+      link: "https://ourdream.netlify.app/",
+    },
   ];
 
   // Animation variants
